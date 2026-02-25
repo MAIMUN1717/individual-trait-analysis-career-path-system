@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career Assessment</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+  <!-- Background Overlay -->
+  <div class="bg-overlay"></div>
+
+  <!-- AUTH SCREEN -->
+<section id="auth-screen" class="screen active">
+  <div class="card">
+    <h2 id="auth-title">Login</h2>
+
+    <input type="text" id="name-field" placeholder="Full Name" style="display:none;" />
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <button id="auth-submit-btn">Login</button>
+
+    <p style="margin-top:15px;">
+      <span id="toggle-auth" style="color:#4a90e2;cursor:pointer;">
+        Don't have an account? Register
+      </span>
+    </p>
+  </div>
+</section>
+
+  <!-- WELCOME SCREEN -->
+  <section id="welcome-screen" class="screen">
+    <div class="card">
+      <h1>Psychometric Career Assessment</h1>
+      <p>Discover technical careers that match your strengths.</p>
+      <button id="start-btn">Start Career Assessment</button>
+    </div>
+  </section>
+
+  <!-- QUESTION SCREEN -->
+  <section id="question-screen" class="screen">
+    <div class="card">
+        <div class="progress-bar">
+           <div id="progress-fill"></div>
+        </div>
+
+      <div id="progress"></div>
+      <h2 id="question-text"></h2>
+      <div id="options-container"></div>
+      <button id="next-btn">Next</button>
+    </div>
+  </section>
+
+  <!-- SUBMIT SCREEN -->
+  <section id="submit-screen" class="screen">
+    <div class="card">
+      <h2>Ready to see your results?</h2>
+      <button id="submit-btn">Submit Assessment</button>
+    </div>
+  </section>
+
+  <!-- LOADING SCREEN -->
+  <section id="loading-screen" class="screen">
+    <div class="card">
+      <div class="loader"></div>
+      <p>Analyzing your responses...</p>
+    </div>
+  </section>
+
+  <!-- RESULTS SCREEN -->
+  <section id="results-screen" class="screen">
+    <div class="card results-card">
+      <h2>Your Career Recommendations</h2>
+      <canvas id="traitChart"></canvas>
+      <div id="roles-container"></div>
+      <button id="restart-btn">Retake Test</button>
+    </div>
+  </section>
+
+  <!-- PROFILE BUTTON -->
+<button id="profile-btn" class="profile-btn hidden">👤</button>
+
+<!-- PROFILE DROPDOWN -->
+<div id="profile-menu" class="profile-menu hidden">
+  <div class="profile-header">
+    <strong id="profile-name"></strong><br>
+    <small id="profile-email"></small>
+  </div>
+
+  <hr>
+
+<div id="user-info" style="margin-bottom:15px;">
+  <strong id="user-name">Loading...</strong><br>
+  <small id="user-email"></small>
+</div>
+<hr>
+
+  <div>
+    <h4>Previous Results</h4>
+    <div id="previous-results"></div>
+  </div>
+
+  <button id="logout-btn" class="logout-btn">Logout</button>
+</div>
+
+  <script src="script.js"></script>
+  <button id="theme-toggle" class="theme-btn">🌙</button>
+
+</body>
+</html>
