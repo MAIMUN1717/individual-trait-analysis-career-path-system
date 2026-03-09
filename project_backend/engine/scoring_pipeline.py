@@ -1,20 +1,21 @@
-from project_backend.engine.scorer import AnswerScorer
-from project_backend.engine.aggregator import TraitAggregator
+from project_backend.engine.theta_engine import ThetaEngine
+from project_backend.engine.trait_model import aggregate_traits
 
 
-def score_answers(questions_by_id: dict, answers: list) -> dict:
-    """
-    Full scoring pipeline.
-    """
+def score_answers(questions_by_id: dict, answers: list):
 
-    aggregator = TraitAggregator()
+    theta_vector, standard_error = ThetaEngine.estimate_theta(
+        questions_by_id,
+        answers
+    )
 
-    for ans in answers:
-        q = questions_by_id.get(ans["question_id"])
-        if not q:
-            continue
+    # Treat theta_vector as raw trait scores
+    raw_traits = theta_vector
 
-        score = AnswerScorer.score(q, ans["selected_option"])
-        aggregator.add(q.trait, score)
+    # Aggregate traits into core psychometric traits
+    final_traits = aggregate_traits(raw_traits)
 
-    return aggregator.aggregate()
+    return {
+        "theta": final_traits,
+        "standard_error": standard_error
+    }

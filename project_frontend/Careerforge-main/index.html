@@ -71,20 +71,33 @@
     </div>
   </section>
 
-  <!-- RESULTS SCREEN -->
-  <section id="results-screen" class="screen">
-    <div class="card results-card">
-      <h2>Your Career Recommendations</h2>
+<!-- RESULTS SCREEN -->
+<section id="results-screen" class="screen">
+  <div class="card results-card">
+
+    <h2>Your Career Recommendations</h2>
+    <h3 id="domain-title"></h3>
+    
+    <!-- Trait Radar Chart -->
+    <div class="chart-container">
       <canvas id="traitChart"></canvas>
-      <div id="roles-container"></div>
-      <button id="restart-btn">Retake Test</button>
     </div>
-  </section>
+
+    <!-- Trait Percentages -->
+    <div id="trait-list" class="trait-list"></div>
+
+    <!-- Career Role Results -->
+    <div id="roles-container"></div>
+
+    <!-- Restart Button -->
+    <button id="restart-btn">Retake Test</button>
+
+  </div>
+</section>
 
   <!-- PROFILE BUTTON -->
-<button id="profile-btn" class="profile-btn hidden">👤</button>
+<button id="profile-btn" class="profile-btn hidden" type="button">👤</button>
 
-<!-- PROFILE DROPDOWN -->
 <div id="profile-menu" class="profile-menu hidden">
   <div class="profile-header">
     <strong id="profile-name"></strong><br>
@@ -93,22 +106,20 @@
 
   <hr>
 
-<div id="user-info" style="margin-bottom:15px;">
-  <strong id="user-name">Loading...</strong><br>
-  <small id="user-email"></small>
-</div>
-<hr>
+  <div id="user-info" style="margin-bottom:15px;">
+    <strong id="user-name">Loading...</strong><br>
+    <small id="user-email"></small>
+  </div>
+  <hr>
 
   <div>
     <h4>Previous Results</h4>
     <div id="previous-results"></div>
   </div>
 
-  <button id="logout-btn" class="logout-btn">Logout</button>
+  <button id="logout-btn" class="logout-btn" type="button">Logout</button>
 </div>
 
-  <script src="script.js"></script>
-  <button id="theme-toggle" class="theme-btn">🌙</button>
+<button id="theme-toggle" class="theme-btn" type="button">🌙</button>
 
-</body>
-</html>
+<script src="script.js"></script>

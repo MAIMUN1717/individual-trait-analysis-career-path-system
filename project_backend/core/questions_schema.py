@@ -1,5 +1,3 @@
-# core/questions_schema.py
-
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
@@ -26,3 +24,8 @@ class Question:
     trait: str
     qtype: QuestionType
     priority: Priority
+
+    # IRT PARAMETERS
+    difficulty_b: float = 0.0
+    discrimination_a: float = 1.0
+    guessing_c: float = 0.0

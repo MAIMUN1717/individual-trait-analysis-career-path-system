@@ -3,15 +3,19 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 import random
 import time
+from pydantic import BaseModel
+from typing import List
 
 from project_backend.engine.sampler import QuestionSampler
 from project_backend.api.schemas import AnalyzeRequest, AnalyzeResponse
 from project_backend.engine.scoring_pipeline import score_answers
 from project_backend.engine.recommender import recommend_with_explanations
+from project_backend.engine.question_selector import AdaptiveQuestionSelector
+
 
 # ✅ Correct DB + Auth imports
 from project_backend.db.db import get_db
-from project_backend.db.models import User, TestSession, RoleResult
+from project_backend.db.models import User, TestSession, RoleResult, TraitEstimate
 from project_backend.auth.dependencies import get_current_user
 
 # Question banks
@@ -26,6 +30,10 @@ from project_backend.question_bank.interests_riasec import INTEREST_QUESTIONS
 from project_backend.question_bank.problem_solving import PROBLEM_SOLVING_QUESTIONS
 from project_backend.question_bank.academics import ACADEMIC_QUESTIONS
 router = APIRouter()
+
+class NextQuestionRequest(BaseModel):
+    theta: float
+    answered_ids: List[str]
 
 # 🔹 Build question lookup
 ALL_QUESTIONS = (
@@ -54,14 +62,53 @@ def analyze(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    trait_vector = score_answers(
+    # ----------------------------
+    # 1️⃣ Score (Dual Engine)
+    # ----------------------------
+    result = score_answers(
         QUESTIONS,
         [ans.dict() for ans in request.answers]
     )
 
-    recommendations = recommend_with_explanations(trait_vector)
+    trait_vector = result["theta"]
+    standard_error = result["standard_error"]
 
-    # SAVE SESSION
+    print("Final Traits:", trait_vector)
+
+    # ----------------------------
+    # 2️⃣ Normalize Theta
+    # ----------------------------
+    normalized_traits = {}
+
+    for trait, value in trait_vector.items():
+
+        normalized = (value + 3) / 6
+
+        # Clamp between 0 and 1
+        normalized_traits[trait] = max(0.0, min(1.0, normalized))
+
+    # ----------------------------
+    # 3️⃣ Get Domain + Recommendations
+    # ----------------------------
+    recs = recommend_with_explanations(
+        normalized_traits,
+        standard_error
+    )
+
+    domain = recs["domain"]
+    recommendations = recs["recommendations"]
+
+    recommendations = sorted(
+        recommendations,
+        key=lambda x: x["fit_score"],
+        reverse=True
+    )
+
+    top3 = recommendations[:3]
+
+    # ----------------------------
+    # 4️⃣ Save Test Session
+    # ----------------------------
     session = TestSession(
         user_id=current_user.id,
         created_at=datetime.utcnow()
@@ -70,23 +117,45 @@ def analyze(
     db.commit()
     db.refresh(session)
 
-    # SAVE ROLE RESULTS
-    for rec in recommendations:
-        result = RoleResult(
+    # ----------------------------
+    # 5️⃣ Save Role Results
+    # ----------------------------
+    for rec in top3:
+        result_entry = RoleResult(
             session_id=session.id,
             role_name=rec["role"],
             fit_score=rec["fit_score"]
         )
-        db.add(result)
+        db.add(result_entry)
 
     db.commit()
 
+    # ----------------------------
+    # 6️⃣ Save Trait Estimates
+    # ----------------------------
+    for trait, value in trait_vector.items():
+        theta_entry = TraitEstimate(
+            session_id=session.id,
+            trait_name=trait,
+            theta_value=value,
+            standard_error=standard_error.get(trait)
+        )
+        db.add(theta_entry)
+
+    db.commit()
+
+    # ----------------------------
+    # 7️⃣ Return Response
+    # ----------------------------
     return {
-        "traits": trait_vector,
+        "traits": normalized_traits,
+        "standard_error": standard_error,
+        "domain": domain,
         "recommendations": recommendations
     }
 
 
+# =====================================================
 # =====================================================
 # QUESTIONS ENDPOINT (UPGRADED DISTRIBUTION MODEL)
 # =====================================================
@@ -136,3 +205,34 @@ def get_questions():
         }
         for q in selected_questions
     ]
+
+
+@router.post("/next-question")
+def next_question(request: NextQuestionRequest):
+
+    theta = request.theta
+    answered_ids = request.answered_ids
+
+    answered_set = set(answered_ids)
+
+    remaining_questions = [
+        q for q in QUESTIONS.values()
+        if q.id not in answered_set
+    ]   
+
+    next_q = AdaptiveQuestionSelector.select_next_question(
+        theta,
+        remaining_questions
+    )
+
+    if not next_q:
+        return {"status": "complete"}
+
+    return {
+        "question_id": next_q.id,
+        "text": next_q.text,
+        "options": next_q.options
+    }
+
+
+    

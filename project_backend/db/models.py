@@ -35,3 +35,12 @@ class RoleResult(Base):
     fit_score = Column(Float)
 
     session = relationship("TestSession", back_populates="results")
+
+class TraitEstimate(Base):
+    __tablename__ = "trait_estimates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(Integer, ForeignKey("test_sessions.id"))
+    trait_name = Column(String(100))
+    theta_value = Column(Float)
+    standard_error = Column(Float, nullable=True)

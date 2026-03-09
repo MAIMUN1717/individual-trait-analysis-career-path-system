@@ -114,38 +114,111 @@ if (profileBtn && profileMenu) {
 }
 
 // -----------------------------
-// LOGIN / REGISTER
+// AUTH TOGGLE (Login <-> Register)
 // -----------------------------
-document.getElementById("auth-submit-btn")?.addEventListener("click", async () => {
+const authTitle = document.getElementById("auth-title");
+const toggleAuth = document.getElementById("toggle-auth");
+const nameField = document.getElementById("name-field");
+const authBtn = document.getElementById("auth-submit-btn");
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+if (toggleAuth) {
+  toggleAuth.addEventListener("click", () => {
+    isRegisterMode = !isRegisterMode;
+
+    if (isRegisterMode) {
+      authTitle.innerText = "Register";
+      nameField.style.display = "block";
+      authBtn.innerText = "Register";
+      toggleAuth.innerText = "Already have an account? Login";
+    } else {
+      authTitle.innerText = "Login";
+      nameField.style.display = "none";
+      authBtn.innerText = "Login";
+      toggleAuth.innerText = "Don't have an account? Register";
+    }
+  });
+}
+
+// -----------------------------
+// LOGIN / REGISTER HANDLER
+// -----------------------------
+authBtn?.addEventListener("click", async () => {
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const name = document.getElementById("name-field").value.trim();
 
   if (!email || !password) {
-    alert("Please fill all required fields");
+    alert("Please fill required fields");
     return;
   }
 
-  const formData = new URLSearchParams();
-  formData.append("username", email);
-  formData.append("password", password);
+  try {
 
-  const res = await fetch(`${API_BASE}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formData
-  });
+    if (isRegisterMode) {
 
-  const data = await res.json();
+      if (!name) {
+        alert("Please enter your full name");
+        return;
+      }
 
-  if (res.ok) {
-    localStorage.setItem("access_token", data.access_token);
-    accessToken = data.access_token;
-    showScreen("welcome-screen");
-    await loadUserProfile();
-  } else {
-    alert("Invalid credentials");
+      const registerRes = await fetch(`${API_BASE}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password
+        })
+      });
+
+      if (!registerRes.ok) {
+        const err = await registerRes.json();
+        alert(err.detail || "Registration failed");
+        return;
+      }
+
+      alert("Registration successful. Please login.");
+      isRegisterMode = false;
+      authTitle.innerText = "Login";
+      nameField.style.display = "none";
+      authBtn.innerText = "Login";
+      toggleAuth.innerText = "Don't have an account? Register";
+      return;
+
+    } else {
+
+      const formData = new URLSearchParams();
+      formData.append("username", email);
+      formData.append("password", password);
+
+      const loginRes = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData
+      });
+
+      const data = await loginRes.json();
+
+      if (!loginRes.ok) {
+        alert("Invalid credentials");
+        return;
+      }
+
+      localStorage.setItem("access_token", data.access_token);
+      accessToken = data.access_token;
+
+      document.getElementById("profile-btn")?.classList.remove("hidden");
+
+      showScreen("welcome-screen");
+      await loadUserProfile();
+    }
+
+  } catch (err) {
+    console.error("Auth error:", err);
+    alert("Something went wrong.");
   }
+
 });
 
 // -----------------------------
@@ -254,38 +327,171 @@ document.getElementById("submit-btn")?.addEventListener("click", async () => {
 
 
 // -----------------------------
-// RENDER RESULTS (BAR CHART)
+// RENDER RESULTS (BAR CHART + TOP 3 WITH EXPLANATION)
 // -----------------------------
 function renderResults() {
+  const domainTitle = document.getElementById("domain-title");
 
-  const labels = Object.keys(resultData.traits);
-  const dataValues = Object.values(resultData.traits);
+  if (domainTitle && resultData.domain) {
+    const domainNames = {
+  ai_data: "AI / Data Science",
+  software_engineering: "Software Engineering",
+  cloud_devops: "Cloud & DevOps",
+  cybersecurity: "Cybersecurity",
+  product_design: "Product & Product Strategy"
+};
 
-  const ctx = document.getElementById("traitChart");
+const prettyDomain = domainNames[resultData.domain] || resultData.domain;
 
-  if (window.traitChartInstance) {
-    window.traitChartInstance.destroy();
+domainTitle.innerText = "Detected Career Domain: " + prettyDomain;
   }
 
-  window.traitChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Trait Level',
-        data: dataValues
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      scales: {
-        x: {
-          min: 0,
-          max: 1
+  // --------------------
+  // Render Trait Chart
+  // --------------------
+  const labels = Object.keys(resultData.traits);
+
+  // Pretty trait labels
+  const traitLabels = {
+    analytical_reasoning: "Analytical Reasoning",
+    problem_framing: "Problem Framing",
+    learning_agility: "Learning Agility",
+    attention_control: "Attention Control",
+    creativity: "Creativity",
+    decision_style: "Decision Style"
+  };
+
+  // Psychometric interpretation
+  function interpretTrait(score) {
+
+    if (score < 40) return "Emerging";
+    if (score < 60) return "Developing";
+    if (score < 80) return "Strong";
+
+    return "Exceptional";
+  }
+  const dataValues = Object.values(resultData.traits).map(v => v * 100);
+  const ctx = document.getElementById("traitChart");
+
+  // Destroy old chart if it exists
+if (window.traitChartInstance) {
+  window.traitChartInstance.destroy();
+}
+
+// Create radar chart
+window.traitChartInstance = new Chart(ctx, {
+  type: 'radar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Trait Profile',
+      data: dataValues,
+      fill: true,
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      borderColor: 'rgb(54, 162, 235)',
+      pointBackgroundColor: 'rgb(54, 162, 235)',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        ticks: {
+          stepSize: 20
         }
       }
     }
-    
+  }
+});
+
+// ---------------------
+// Render Trait Percentages
+// ---------------------
+const traitList = document.getElementById("trait-list");
+
+if (traitList) {
+  traitList.innerHTML = "";
+
+  labels.forEach((trait, i) => {
+    const percent = (dataValues[i]).toFixed(1);
+
+    const div = document.createElement("div");
+    const label = traitLabels[trait] || trait;
+    const interpretation = interpretTrait(percent);
+
+    div.innerHTML = `<strong>${label}</strong>: ${percent}% (${interpretation})`;
+
+    traitList.appendChild(div);
+  });
+}
+
+  // --------------------
+  // Render Top Roles
+  // --------------------
+  const rolesContainer = document.getElementById("roles-container");
+  rolesContainer.innerHTML = "";
+
+  if (!resultData.recommendations || resultData.recommendations.length === 0) {
+    rolesContainer.innerHTML = "<p>No recommendations available.</p>";
+    return;
+  }
+
+resultData.recommendations.slice(0,3).forEach((roleObj, index) => {
+    const percent = (roleObj.fit_score * 100).toFixed(1);
+
+    let explanationHTML = "";
+
+    if (roleObj.explanation && typeof roleObj.explanation === "object") {
+
+      const exp = roleObj.explanation;
+
+      if (exp.summary) {
+        explanationHTML += `<p style="margin-top:10px;">${exp.summary}</p>`;
+      }
+
+      if (exp.strengths && exp.strengths.length > 0) {
+        explanationHTML += `
+          <p><strong>Strengths:</strong></p>
+          <ul>
+            ${exp.strengths.map(s => `<li>${s}</li>`).join("")}
+          </ul>
+        `;
+      }
+
+      if (exp.gaps && exp.gaps.length > 0) {
+        explanationHTML += `
+          <p><strong>Areas to Improve:</strong></p>
+          <ul>
+            ${exp.gaps.map(g => `<li>${g}</li>`).join("")}
+          </ul>
+        `;
+      }
+
+      if (exp.growth_suggestions && exp.growth_suggestions.length > 0) {
+        explanationHTML += `
+          <p><strong>Growth Suggestions:</strong></p>
+          <ul>
+            ${exp.growth_suggestions.map(gs => `<li>${gs}</li>`).join("")}
+          </ul>
+        `;
+      }
+
+    } else if (typeof roleObj.explanation === "string") {
+      explanationHTML = `<p>${roleObj.explanation}</p>`;
+    }
+
+    const div = document.createElement("div");
+    div.className = "role-card slide-in";
+
+    div.innerHTML = `
+      <h3>#${index + 1} ${roleObj.role}</h3>
+      <p><strong>Match Score:</strong> ${percent}%</p>
+      ${explanationHTML}
+    `;
+
+    rolesContainer.appendChild(div);
   });
 }
 document.addEventListener("DOMContentLoaded", () => {

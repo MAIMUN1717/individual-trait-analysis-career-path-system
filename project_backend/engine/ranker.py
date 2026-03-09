@@ -1,24 +1,22 @@
 from project_backend.roles.role_definitions import ROLES
 from project_backend.engine.matcher import RoleMatcher
-    
 
-def rank_roles(trait_vector: dict):
+
+def rank_roles(trait_vector: dict, standard_error: dict, domain=None):
+
     results = []
 
     for role_name, role_req in ROLES.items():
 
-        eligible = RoleMatcher.check_eligibility(
-            trait_vector,
-            role_req.eligibility
-        )
-
-        if not eligible:
-            continue
-
         fit_score, matched, weak = RoleMatcher.compute_fit(
             trait_vector,
-            role_req
+            role_req,
+            standard_error
         )
+
+        # Strong domain preference
+        if domain and role_req.domain == domain:
+            fit_score += 0.15
 
         results.append({
             "role": role_name,
