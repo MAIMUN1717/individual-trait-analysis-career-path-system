@@ -39,3 +39,12 @@ and structured scoring to provide explainable career recommendations.
 ---
 
 ## 🗂️ Project Structure
+
+
+## Latest Upgrade
+Domain-aware career recommendation engine.
+
+- Domain prediction using cosine similarity
+- Domain confidence weighting
+- Domain-boosted role ranking
+- Improved trait interpretation
