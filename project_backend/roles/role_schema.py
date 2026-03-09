@@ -4,6 +4,15 @@ from typing import Dict, Optional
 
 @dataclass(frozen=True)
 class RoleRequirement:
-    trait_weights: Dict[str, float]   # sum <= 1.0
-    min_thresholds: Dict[str, float]  # hard cutoffs
+
+    # domain the role belongs to
+    domain: str
+
+    # role trait weights
+    trait_weights: Dict[str, float]
+
+    # minimum thresholds
+    min_thresholds: Dict[str, float]
+
+    # optional eligibility filters
     eligibility: Optional[Dict[str, float]] = None

@@ -4,6 +4,7 @@ from project_backend.roles.role_schema import RoleRequirement
 ROLES = {
 
     "Backend Developer": RoleRequirement(
+        domain="software_engineering",
         trait_weights={
             "logical_reasoning": 0.18,
             "analytical_reasoning": 0.17,
@@ -25,6 +26,7 @@ ROLES = {
     ),
 
     "Data Scientist": RoleRequirement(
+        domain="ai_data",
         trait_weights={
             "analytical_reasoning": 0.20,
             "logical_reasoning": 0.15,
@@ -46,6 +48,7 @@ ROLES = {
     ),
 
     "Full Stack Developer": RoleRequirement(
+        domain="software_engineering",
         trait_weights={
             "logical_reasoning": 0.18,
             "analytical_reasoning": 0.15,
@@ -65,8 +68,8 @@ ROLES = {
         }
     ),
 
-
     "Frontend Developer": RoleRequirement(
+        domain="software_engineering",
         trait_weights={
             "abstract_reasoning": 0.18,
             "openness": 0.15,
@@ -86,6 +89,7 @@ ROLES = {
     ),
 
     "ML Engineer": RoleRequirement(
+        domain="ai_data",
         trait_weights={
             "analytical_reasoning": 0.22,
             "logical_reasoning": 0.18,
@@ -105,6 +109,7 @@ ROLES = {
     ),
 
     "DevOps Engineer": RoleRequirement(
+        domain="cloud_devops",
         trait_weights={
             "logical_reasoning": 0.15,
             "planning_and_monitoring": 0.20,
@@ -124,6 +129,7 @@ ROLES = {
     ),
 
     "Cloud Engineer": RoleRequirement(
+        domain="cloud_devops",
         trait_weights={
             "logical_reasoning": 0.18,
             "analytical_reasoning": 0.15,
@@ -143,6 +149,7 @@ ROLES = {
     ),
 
     "Cybersecurity Analyst": RoleRequirement(
+        domain="cybersecurity",
         trait_weights={
             "analytical_reasoning": 0.20,
             "logical_reasoning": 0.18,
@@ -160,8 +167,8 @@ ROLES = {
         }
     ),
 
-
     "Product Manager": RoleRequirement(
+        domain="product_design",
         trait_weights={
             "problem_framing": 0.18,
             "tradeoff_analysis": 0.18,
@@ -181,6 +188,7 @@ ROLES = {
     ),
 
     "UI/UX Designer": RoleRequirement(
+        domain="product_design",
         trait_weights={
             "artistic_interest": 0.22,
             "openness": 0.18,
@@ -199,5 +207,3 @@ ROLES = {
         }
     ),
 }
-
-
