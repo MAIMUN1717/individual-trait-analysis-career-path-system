@@ -1,6 +1,7 @@
 from project_backend.engine.ranker import rank_roles
 from project_backend.engine.explainer import RoleExplainer
 from project_backend.engine.domain_predictor import predict_domain
+from project_backend.roles.role_definitions import ROLES
 
 
 def recommend_with_explanations(trait_vector: dict, standard_error: dict):
@@ -14,7 +15,9 @@ def recommend_with_explanations(trait_vector: dict, standard_error: dict):
     )
 
     for role in ranked_roles:
-        role["explanation"] = RoleExplainer.explain(role)
+        role_name = role["role"]
+        role_traits = ROLES[role_name].trait_weights
+        role["explanation"] = RoleExplainer.explain_with_gemini(role, trait_vector, role_traits, role_name)
 
     return {
         "domain": detected_domain,
