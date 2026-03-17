@@ -1,0 +1,84 @@
+{
+    "Cybersecurity": [
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"I typically consider multiple potential vulnerabilities when evaluating a system's overall security.\""
+        },
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"I typically consider multiple potential vulnerabilities when evaluating a cybersecurity system.\""
+        },
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"I tend to scrutinize digital systems for potential vulnerabilities even when they seem secure.\""
+        },
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"I typically consider multiple potential vulnerabilities when evaluating a cybersecurity system.\""
+        },
+        {
+            "trait": "attention_control",
+            "question": "\"I consistently monitor system logs and network traffic for potential security threats even when not explicitly required to do so.\""
+        },
+        {
+            "trait": "attention_control",
+            "question": "\"I consistently prioritize reviewing system logs to detect potential security threats.\""
+        },
+        {
+            "trait": "attention_control",
+            "question": "\"I consistently review system logs to detect potential security threats even when no issues are apparent.\""
+        },
+        {
+            "trait": "attention_control",
+            "question": "\"I consistently monitor system logs and network traffic for potential security threats even when not explicitly required to do so.\""
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "\"I often wonder about the potential vulnerabilities in the systems I use.\""
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "\"I often wonder about the potential vulnerabilities in the systems I use.\""
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "\"I often wonder about the potential vulnerabilities in the systems I use, even when they seem secure.\""
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "\"I often wonder about the potential vulnerabilities in the systems I use.\""
+        },
+        {
+            "trait": "risk_awareness",
+            "question": "I always consider potential security threats when adopting new technologies."
+        },
+        {
+            "trait": "risk_awareness",
+            "question": "I always consider potential security threats when adopting new technologies."
+        },
+        {
+            "trait": "risk_awareness",
+            "question": "I always consider potential security threats when introducing new technology into my work environment."
+        },
+        {
+            "trait": "risk_awareness",
+            "question": "I always consider potential security threats when adopting new technologies."
+        },
+        {
+            "trait": "problem_framing",
+            "question": "When addressing cybersecurity threats, I consider multiple potential causes before focusing on a solution."
+        },
+        {
+            "trait": "problem_framing",
+            "question": "When faced with a cybersecurity threat, I consider multiple potential causes before taking action."
+        },
+        {
+            "trait": "problem_framing",
+            "question": "When addressing cybersecurity threats, I consider multiple potential causes before focusing on a solution."
+        },
+        {
+            "trait": "problem_framing",
+            "question": "When addressing cybersecurity threats, I consider multiple factors and potential consequences before defining the problem."
+        }
+    ]
+}

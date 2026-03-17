@@ -11,6 +11,10 @@ from project_backend.api.schemas import AnalyzeRequest, AnalyzeResponse
 from project_backend.engine.scoring_pipeline import score_answers
 from project_backend.engine.recommender import recommend_with_explanations
 from project_backend.engine.question_selector import AdaptiveQuestionSelector
+from project_backend.ai.career_chat import career_chat
+from project_backend.ai.fit_checker import evaluate_role_fit
+from project_backend.ai.ai_explainer import generate_ai_analysis
+from project_backend.ai.skill_advisor import generate_skill_plan
 
 
 # ✅ Correct DB + Auth imports
@@ -107,7 +111,33 @@ def analyze(
     top3 = recommendations[:3]
 
     # ----------------------------
-    # 4️⃣ Save Test Session
+    # 🧠 4️⃣ Generate AI Insights
+    # ----------------------------
+
+
+    ai_role_analysis = []
+
+    for rec in top3:
+        role_name = rec["role"]
+
+        analysis = generate_ai_analysis(
+            role_name,
+            normalized_traits
+        )
+
+        ai_role_analysis.append({
+        "role": role_name,
+        "analysis": analysis
+    })
+
+# Skill plan for the best role
+    ai_skill_plan = generate_skill_plan(
+        normalized_traits,
+        top3[0]["role"]
+    )
+
+    # ----------------------------
+    # 5️⃣ Save Test Session
     # ----------------------------
     session = TestSession(
         user_id=current_user.id,
@@ -118,7 +148,7 @@ def analyze(
     db.refresh(session)
 
     # ----------------------------
-    # 5️⃣ Save Role Results
+    # 6️⃣ Save Role Results
     # ----------------------------
     for rec in top3:
         result_entry = RoleResult(
@@ -131,7 +161,7 @@ def analyze(
     db.commit()
 
     # ----------------------------
-    # 6️⃣ Save Trait Estimates
+    # 7️⃣ Save Trait Estimates
     # ----------------------------
     for trait, value in trait_vector.items():
         theta_entry = TraitEstimate(
@@ -145,16 +175,16 @@ def analyze(
     db.commit()
 
     # ----------------------------
-    # 7️⃣ Return Response
+    # 8️⃣ Return Response
     # ----------------------------
     return {
-        "traits": normalized_traits,
-        "standard_error": standard_error,
-        "domain": domain,
-        "recommendations": recommendations
-    }
-
-
+    "traits": normalized_traits,
+    "standard_error": standard_error,
+    "domain": domain,
+    "recommendations": recommendations,
+    "ai_role_analysis": ai_role_analysis,
+    "ai_skill_plan": ai_skill_plan
+}
 # =====================================================
 # =====================================================
 # QUESTIONS ENDPOINT (UPGRADED DISTRIBUTION MODEL)
@@ -235,4 +265,31 @@ def next_question(request: NextQuestionRequest):
     }
 
 
-    
+@router.post("/ai/chat")
+def ai_chat(request: dict):
+
+    message = request.get("message")
+    traits = request.get("traits")
+    domain = request.get("domain")
+    roles = request.get("roles")
+
+    reply = career_chat(
+        message,
+        traits,
+        domain,
+        roles
+    )
+
+    return {"reply": reply}
+
+
+@router.post("/ai/fit-check")
+def fit_check(request: dict):
+
+    role = request.get("role")
+    answers = request.get("answers")
+    traits = request.get("traits")
+
+    result = evaluate_role_fit(role, traits, answers)
+
+    return {"evaluation": result}

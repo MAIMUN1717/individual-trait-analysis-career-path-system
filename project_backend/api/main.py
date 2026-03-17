@@ -8,7 +8,9 @@ from project_backend.auth.dependencies import get_current_user
 from project_backend.db.models import User
 from project_backend.db.models import User, TestSession, RoleResult
 from project_backend.db.db import get_db
-
+from .fit_routes import router as fit_router
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(
     title="FYP Career Recommendation Backend",
@@ -18,6 +20,7 @@ app = FastAPI(
 
 app.include_router(router)
 app.include_router(auth_router)
+app.include_router(fit_router)
 
 @app.get("/profile")
 def profile(current_user: User = Depends(get_current_user)):

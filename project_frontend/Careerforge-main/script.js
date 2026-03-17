@@ -320,11 +320,17 @@ document.getElementById("submit-btn")?.addEventListener("click", async () => {
     body: JSON.stringify({ answers })
   });
 
-  resultData = await res.json();
-  showScreen("results-screen");
-  renderResults();
-});
+resultData = await res.json();
 
+if (!resultData) {
+  alert("Error getting results");
+  return;
+}
+
+showScreen("results-screen");
+renderResults();
+
+});
 
 // -----------------------------
 // RENDER RESULTS (BAR CHART + TOP 3 WITH EXPLANATION)
@@ -332,8 +338,7 @@ document.getElementById("submit-btn")?.addEventListener("click", async () => {
 function renderResults() {
   const domainTitle = document.getElementById("domain-title");
 
-  if (domainTitle && resultData.domain) {
-    const domainNames = {
+const domainNames = {
   ai_data: "AI / Data Science",
   software_engineering: "Software Engineering",
   cloud_devops: "Cloud & DevOps",
@@ -341,9 +346,9 @@ function renderResults() {
   product_design: "Product & Product Strategy"
 };
 
-const prettyDomain = domainNames[resultData.domain] || resultData.domain;
-
-domainTitle.innerText = "Detected Career Domain: " + prettyDomain;
+if (domainTitle && resultData.domain) {
+  const prettyDomain = domainNames[resultData.domain] || resultData.domain;
+  domainTitle.innerText = "Detected Career Domain: " + prettyDomain;
   }
 
   // --------------------
@@ -441,7 +446,7 @@ if (traitList) {
 resultData.recommendations.slice(0,3).forEach((roleObj, index) => {
     const percent = (roleObj.fit_score * 100).toFixed(1);
 
-    let explanationHTML = "";
+    /*let explanationHTML = "";
 
     if (roleObj.explanation && typeof roleObj.explanation === "object") {
 
@@ -478,21 +483,81 @@ resultData.recommendations.slice(0,3).forEach((roleObj, index) => {
         `;
       }
 
-    } else if (typeof roleObj.explanation === "string") {
-      explanationHTML = `<p>${roleObj.explanation}</p>`;
     }
-
+    */ 
+     
     const div = document.createElement("div");
     div.className = "role-card slide-in";
 
     div.innerHTML = `
-      <h3>#${index + 1} ${roleObj.role}</h3>
+      <h3>🎯 ${roleObj.role}</h3>
       <p><strong>Match Score:</strong> ${percent}%</p>
-      ${explanationHTML}
     `;
 
     rolesContainer.appendChild(div);
   });
+// --------------------
+// Render AI Career Insights
+// --------------------
+const aiSection = document.getElementById("ai-section");
+const aiRoleContainer = document.getElementById("ai-role-analysis");
+const aiSkillPlan = document.getElementById("ai-skill-plan");
+
+if (resultData.ai_role_analysis || resultData.ai_skill_plan) {
+
+  // Clear previous analysis
+  if (aiRoleContainer) {
+    aiRoleContainer.innerHTML = "";
+
+    if (resultData.ai_role_analysis) {
+
+      resultData.ai_role_analysis.forEach(item => {
+
+        const block = document.createElement("div");
+        block.className = "ai-card";
+
+        block.innerHTML = `
+          <div class="ai-header">
+            ▶ ${item.role}
+          </div>
+
+          <div class="ai-body hidden">
+            <pre>${item.analysis}</pre>
+          </div>
+        `;
+
+        // Toggle expand / collapse
+        const header = block.querySelector(".ai-header");
+        const body = block.querySelector(".ai-body");
+
+        header.addEventListener("click", () => {
+
+          body.classList.toggle("hidden");
+
+          if (body.classList.contains("hidden")) {
+            header.innerHTML = "▶ " + item.role;
+          } else {
+            header.innerHTML = "▼ " + item.role;
+          }
+
+        });
+
+        aiRoleContainer.appendChild(block);
+
+      });
+
+    }
+  }
+
+  // Skill roadmap
+  if (aiSkillPlan && resultData.ai_skill_plan) {
+    aiSkillPlan.innerText = resultData.ai_skill_plan;
+  }
+
+  if (aiSection) {
+    aiSection.classList.remove("hidden");
+  }
+
 }
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -514,11 +579,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-
+}
 const restartBtn = document.getElementById("restart-btn");
 
 if (restartBtn) {
   restartBtn.addEventListener("click", () => {
+
     questions = [];
     answers = [];
     currentQuestionIndex = 0;
@@ -530,5 +596,6 @@ if (restartBtn) {
     }
 
     showScreen("welcome-screen");
+
   });
 }

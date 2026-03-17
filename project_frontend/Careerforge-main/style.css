@@ -301,3 +301,72 @@ body.dark-mode .profile-menu {
   border-radius: 10px;
   background: rgba(0,0,0,0.03);
 }
+
+/* ========================= */
+/* AI INSIGHT SECTION */
+/* ========================= */
+
+.ai-section {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.ai-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  line-height: 1.5;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .ai-card {
+  background: #2b2b40;
+  color: white;
+}
+
+#ai-section{
+  margin-top:40px;
+  padding:20px;
+  background:#f8f9ff;
+  border-radius:10px;
+}
+
+.ai-card{
+  background:white;
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:15px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+#ai-skill-plan{
+  white-space:pre-wrap;
+  background:white;
+  padding:15px;
+  border-radius:8px;
+}
+
+/* AI Insight Cards */
+
+.ai-card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.ai-header {
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.ai-body {
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
