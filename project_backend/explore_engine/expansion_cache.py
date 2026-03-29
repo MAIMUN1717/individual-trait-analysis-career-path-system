@@ -1,7 +1,10 @@
 import json
 import os
 
-CACHE_FILE = "explore_expansion_cache.json"
+import os
+import os
+
+CACHE_FILE = os.path.join(os.getenv("TEMP"), "explore_cache.json")
 
 
 def load_cache():

@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -10,17 +11,29 @@ from project_backend.db.models import User, TestSession, RoleResult
 from project_backend.db.db import get_db
 from .fit_routes import router as fit_router
 from dotenv import load_dotenv
-load_dotenv()
 
+from project_backend.db.db import engine, Base
+from project_backend.db import models
+
+from project_backend.explore_engine.explore_api import router as explore_router
+load_dotenv()
+Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="FYP Career Recommendation Backend",
     description="Psychometric-based career recommendation system",
     version="1.0.0"
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(router)
 app.include_router(auth_router)
 app.include_router(fit_router)
+app.include_router(explore_router)
 
 @app.get("/profile")
 def profile(current_user: User = Depends(get_current_user)):

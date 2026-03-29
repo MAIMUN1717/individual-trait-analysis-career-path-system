@@ -1,11 +1,11 @@
 ANSWER_MAP = {
-    "Strongly Agree": 2,
-    "Agree": 1,
-    "Neutral": 0,
-    "Disagree": -1,
-    "Strongly Disagree": -2
+    "strongly_agree": 5,
+    "agree": 4,
+    "neutral": 3,
+    "disagree": 2,
+    "strongly_disagree": 1
 }
 
 
 def normalize(score):
-    return score / 2
+    return score / 5

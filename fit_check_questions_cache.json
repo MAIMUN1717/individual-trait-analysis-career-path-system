@@ -80,5 +80,87 @@
             "trait": "problem_framing",
             "question": "When addressing cybersecurity threats, I consider multiple factors and potential consequences before defining the problem."
         }
+    ],
+    "AI / Machine Learning": [
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"Algorithms are essential for solving complex data problems.\""
+        },
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"Algorithms are best understood through step-by-step breakdowns.\""
+        },
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"Algorithms are best understood by breaking them down.\""
+        },
+        {
+            "trait": "analytical_reasoning",
+            "question": "\"Algorithms are essential for informed decision making.\""
+        },
+        {
+            "trait": "learning_agility",
+            "question": "Fallback question for learning_agility"
+        },
+        {
+            "trait": "learning_agility",
+            "question": "Fallback question for learning_agility"
+        },
+        {
+            "trait": "learning_agility",
+            "question": "Fallback question for learning_agility"
+        },
+        {
+            "trait": "learning_agility",
+            "question": "Fallback question for learning_agility"
+        },
+        {
+            "trait": "problem_framing",
+            "question": "Fallback question for problem_framing"
+        },
+        {
+            "trait": "problem_framing",
+            "question": "Fallback question for problem_framing"
+        },
+        {
+            "trait": "problem_framing",
+            "question": "Fallback question for problem_framing"
+        },
+        {
+            "trait": "problem_framing",
+            "question": "\"I break down complex issues into manageable parts.\""
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "Fallback question for curiosity_depth"
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "Fallback question for curiosity_depth"
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "Fallback question for curiosity_depth"
+        },
+        {
+            "trait": "curiosity_depth",
+            "question": "Fallback question for curiosity_depth"
+        },
+        {
+            "trait": "attention_control",
+            "question": "Fallback question for attention_control"
+        },
+        {
+            "trait": "attention_control",
+            "question": "Fallback question for attention_control"
+        },
+        {
+            "trait": "attention_control",
+            "question": "Fallback question for attention_control"
+        },
+        {
+            "trait": "attention_control",
+            "question": "Fallback question for attention_control"
+        }
     ]
 }

@@ -3,7 +3,7 @@ from project_backend.fit_check.controller import (
     generate_domain_questions,
     evaluate_answers
 )
-from project_backend.fit_check.domain_models import DOMAIN_TRAITS
+from project_backend.fit_check.domain_models import DOMAIN_ARCHETYPES
 
 router = APIRouter(prefix="/fit-check")
 
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/fit-check")
 # ✅ GET ALL DOMAINS
 @router.get("/domains")
 def get_domains():
-    return {"domains": list(DOMAIN_TRAITS.keys())}
+    return {"domains": list(DOMAIN_ARCHETYPES.keys())}
 
 
 # ✅ START FIT CHECK
@@ -23,7 +23,7 @@ def start_fit_check(request: dict):
     if not domain:
         raise HTTPException(status_code=400, detail="Domain is required")
 
-    if domain not in DOMAIN_TRAITS:
+    if domain not in DOMAIN_ARCHETYPES:
         raise HTTPException(status_code=400, detail="Invalid domain")
 
     questions = generate_domain_questions(domain)

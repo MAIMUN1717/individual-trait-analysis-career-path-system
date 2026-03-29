@@ -1,9 +1,9 @@
-from .domain_models import DOMAIN_TRAITS
+from .domain_models import DOMAIN_ARCHETYPES
 
 
 def calculate_fit_score(domain, trait_scores):
 
-    weights = DOMAIN_TRAITS.get(domain)
+    weights = DOMAIN_ARCHETYPES.get(domain)
 
     if not weights:
         return 0

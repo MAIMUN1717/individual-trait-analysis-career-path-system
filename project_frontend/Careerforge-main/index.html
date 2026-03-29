@@ -3,54 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Career Assessment</title>
+  <title>CareerForge AI</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 <body>
-
-  <!-- Background Overlay -->
   <div class="bg-overlay"></div>
 
-  <!-- AUTH SCREEN -->
-<section id="auth-screen" class="screen active">
-  <div class="card">
-    <h2 id="auth-title">Login</h2>
-
-    <input type="text" id="name-field" placeholder="Full Name" style="display:none;" />
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-
-    <button id="auth-submit-btn">Login</button>
-
-    <p style="margin-top:15px;">
-      <span id="toggle-auth" style="color:#4a90e2;cursor:pointer;">
-        Don't have an account? Register
-      </span>
-    </p>
+  <!-- TOP ACTION BUTTONS -->
+  <div class="top-actions">
+    <button id="home-btn" class="home-btn hidden" type="button" aria-label="Go to dashboard">🏠</button>
+    <button id="profile-btn" class="profile-btn hidden" type="button" aria-label="Open profile">👤</button>
+    <button id="theme-toggle" class="theme-btn" type="button" aria-label="Toggle theme">🌙</button>
   </div>
-</section>
 
-  <!-- WELCOME SCREEN -->
+  <!-- ACTIVE PAGE INDICATOR -->
+  <div id="page-indicator" class="page-indicator hidden"></div>
+
+  <!-- PROFILE MENU -->
+  <div id="profile-menu" class="profile-menu hidden">
+    <div class="profile-header">
+      <strong id="profile-name">Guest</strong><br />
+      <small id="profile-email">Not logged in</small>
+    </div>
+
+    <div class="profile-section">
+      <h4>Previous Results</h4>
+      <div id="previous-results"></div>
+    </div>
+
+    <button id="logout-btn" class="logout-btn" type="button">Logout</button>
+  </div>
+
+  <!-- AUTH SCREEN -->
+  <section id="auth-screen" class="screen active">
+    <div class="card auth-card">
+      <h1 class="brand-title">CareerForge AI</h1>
+      <p class="brand-subtitle">AI-powered career intelligence platform</p>
+
+      <h2 id="auth-title">Login</h2>
+
+      <input type="text" id="name-field" placeholder="Full Name" style="display:none;" />
+      <input type="email" id="email" placeholder="Email" />
+
+      <div class="password-field">
+  <input type="password" id="password" placeholder="Password" />
+  <button id="toggle-password" class="password-toggle" type="button" aria-label="Show password">
+    <span id="toggle-password-icon">Show</span>
+  </button>
+</div>
+
+      <button id="auth-submit-btn">Login</button>
+
+      <p class="switch-text">
+        <span id="toggle-auth" class="link-text">Don't have an account? Register</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- HOME / DASHBOARD -->
   <section id="welcome-screen" class="screen">
-    <div class="card">
-      <h1>Psychometric Career Assessment</h1>
-      <p>Discover technical careers that match your strengths.</p>
-      <button id="start-btn">Start Career Assessment</button>
+    <div class="card home-card wide-card">
+      <h1>Welcome to CareerForge AI</h1>
+      <p class="home-intro">
+        Discover career paths, test your fit, explore domains, and get AI-powered insights.
+      </p>
+
+      <div class="dashboard-grid">
+        <div class="feature-card">
+          <h3>🧠 Assessment</h3>
+          <p>Take a psychometric assessment to discover your strongest career path.</p>
+          <button id="start-btn">Start Assessment</button>
+        </div>
+
+        <div class="feature-card">
+          <h3>💬 FitCheck</h3>
+          <p>Try a domain-specific chat-style psychometric fit evaluation.</p>
+          <button id="open-fitcheck-btn">Open FitCheck</button>
+        </div>
+
+        <div class="feature-card">
+          <h3>🌐 Explore</h3>
+          <p>Learn domains deeply with roadmap, tools, projects, and AI expansion.</p>
+          <button id="open-explore-btn">Explore Domains</button>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- QUESTION SCREEN -->
   <section id="question-screen" class="screen">
-    <div class="card">
-        <div class="progress-bar">
-           <div id="progress-fill"></div>
-        </div>
+    <div class="card wide-card">
+      <div class="top-nav-row question-top-row">
+        <div></div>
+        <button class="secondary-btn" id="prev-btn">← Previous</button>
+      </div>
 
-      <div id="progress"></div>
+      <div id="question-number" class="question-number"></div>
+
+      <div class="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+
+      <div id="progress" class="progress-text"></div>
+
       <h2 id="question-text"></h2>
+
       <div id="options-container"></div>
+
       <button id="next-btn">Next</button>
     </div>
   </section>
@@ -59,7 +119,9 @@
   <section id="submit-screen" class="screen">
     <div class="card">
       <h2>Ready to see your results?</h2>
+      <p>Your answers will now be analyzed.</p>
       <button id="submit-btn">Submit Assessment</button>
+      <button class="secondary-btn" id="back-home-from-submit">Back</button>
     </div>
   </section>
 
@@ -71,71 +133,120 @@
     </div>
   </section>
 
-<!-- RESULTS SCREEN -->
-<section id="results-screen" class="screen">
-  <div class="card results-card">
+  <!-- RESULTS SCREEN -->
+  <section id="results-screen" class="screen">
+    <div class="card results-card wide-card">
+      <h2>Your Career Recommendations</h2>
+      <h3 id="domain-title"></h3>
 
-    <h2>Your Career Recommendations</h2>
-    <h3 id="domain-title"></h3>
-    
-    <!-- Trait Radar Chart -->
-    <div class="chart-container">
-      <canvas id="traitChart"></canvas>
+      <div class="chart-container">
+        <canvas id="traitChart"></canvas>
+      </div>
+
+      <div id="trait-list" class="trait-list"></div>
+      <div id="roles-container"></div>
+
+      <div id="ai-section" class="ai-section hidden">
+        <h3>🧠 AI Career Insights</h3>
+        <div id="ai-role-analysis"></div>
+
+        <hr class="divider" />
+
+        <h3>🚀 AI Skill Roadmap</h3>
+        <div id="ai-skill-plan" class="ai-card"></div>
+      </div>
+
+      <button id="restart-btn">Retake Test</button>
     </div>
+  </section>
 
-    <!-- Trait Percentages -->
-    <div id="trait-list" class="trait-list"></div>
+  <!-- FITCHECK DOMAIN SELECTION -->
+  <section id="fitcheck-domain-screen" class="screen">
+    <div class="card wide-card">
+      <h2>FitCheck</h2>
+      <p>Select a domain to begin your chat-style psychometric fit test.</p>
 
-    <!-- Career Role Results -->
-    <div id="roles-container"></div>
+      <div id="fitcheck-domain-list" class="domain-grid"></div>
+    </div>
+  </section>
 
-    <!-- ====================== -->
-<!-- ====================== -->
-<!-- AI CAREER INSIGHT -->
-<!-- ====================== -->
-<div id="ai-section" class="ai-section hidden">
+  <!-- FITCHECK CHAT SCREEN -->
+  <section id="fitcheck-chat-screen" class="screen">
+    <div class="card wide-card">
+      <div class="top-nav-row question-top-row">
+        <button class="secondary-btn" id="back-fitcheck-to-domain">← Back</button>
+        <button class="secondary-btn" id="fitcheck-prev-btn">← Previous</button>
+      </div>
 
-  <h3>🧠 AI Career Insights</h3>
+      <div style="text-align:center;">
+        <div id="fitcheck-domain-heading" class="fitcheck-domain-badge"></div>
+      </div>
 
-  <!-- AI analysis for each role -->
-  <div id="ai-role-analysis"></div>
-<hr style="margin:15px 0;">
-  <h3 style="margin-top:20px;">🚀 AI Skill Roadmap</h3>
-  <div id="ai-skill-plan" class="ai-card"></div>
+      <div class="progress-bar">
+        <div id="fitcheck-progress-fill"></div>
+      </div>
 
-</div>
+      <div id="fitcheck-progress" class="progress-text"></div>
 
-    <!-- Restart Button -->
-    <button id="restart-btn">Retake Test</button>
+      <div class="chat-box">
+        <div class="chat-bubble ai-bubble" id="fitcheck-question-text">
+          Question will appear here
+        </div>
+      </div>
 
-  </div>
-</section>
+      <div id="fitcheck-options" class="likert-grid"></div>
 
-  <!-- PROFILE BUTTON -->
-<button id="profile-btn" class="profile-btn hidden" type="button">👤</button>
+      <button id="fitcheck-next-btn">Next</button>
+    </div>
+  </section>
 
-<div id="profile-menu" class="profile-menu hidden">
-  <div class="profile-header">
-    <strong id="profile-name"></strong><br>
-    <small id="profile-email"></small>
-  </div>
+  <!-- FITCHECK RESULT SCREEN -->
+  <section id="fitcheck-result-screen" class="screen">
+    <div class="card wide-card">
+      <h2>FitCheck Result</h2>
+      <h3 id="fitcheck-domain-title"></h3>
 
-  <hr>
+      <div class="fit-score-box">
+        <span>Fit Score</span>
+        <strong id="fit-score-value">0%</strong>
+      </div>
 
-  <div id="user-info" style="margin-bottom:15px;">
-    <strong id="user-name">Loading...</strong><br>
-    <small id="user-email"></small>
-  </div>
-  <hr>
+      <div id="fitcheck-traits" class="trait-list"></div>
 
-  <div>
-    <h4>Previous Results</h4>
-    <div id="previous-results"></div>
-  </div>
+      <div class="feedback-grid">
+        <div class="feedback-card">
+          <h4>Strengths</h4>
+          <p id="fit-strengths"></p>
+        </div>
+        <div class="feedback-card">
+          <h4>Weaknesses</h4>
+          <p id="fit-weaknesses"></p>
+        </div>
+        <div class="feedback-card">
+          <h4>Advice</h4>
+          <p id="fit-advice"></p>
+        </div>
+        <div class="feedback-card">
+          <h4>Suggested Projects</h4>
+          <p id="fit-projects"></p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <button id="logout-btn" class="logout-btn" type="button">Logout</button>
-</div>
+  <!-- EXPLORE SCREEN -->
+  <section id="explore-screen" class="screen">
+    <div class="card wide-card">
+      <h2>Explore Domains</h2>
+      <p>Choose a domain to learn more.</p>
 
-<button id="theme-toggle" class="theme-btn" type="button">🌙</button>
+      <div id="explore-domain-grid" class="domain-grid"></div>
+      <div id="explore-detail" class="explore-detail hidden"></div>
+    </div>
+  </section>
 
-<script src="script.js"></script>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

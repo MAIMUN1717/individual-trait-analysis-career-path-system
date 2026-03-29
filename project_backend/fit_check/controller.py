@@ -1,19 +1,15 @@
-from .domain_models import DOMAIN_TRAITS
-from .question_generator import generate_question
+from .domain_models import DOMAIN_ARCHETYPES
+from .question_generator import generate_questions
 from .cache_manager import get_cached_questions, store_questions
 from .trait_engine import ANSWER_MAP, normalize
 from .fit_calculator import calculate_fit_score
 from .mentor_feedback import generate_feedback
 
 
-# 🔧 CONFIG
-QUESTIONS_PER_TRAIT = 4   # 5 traits × 4 = 20 questions
+QUESTIONS_PER_TRAIT = 4
 
 
-# 🧠 GENERATE QUESTIONS (WITH CACHE)
 def generate_domain_questions(domain, refresh=False):
-
-    # 🔍 Check cache
     if not refresh:
         cached = get_cached_questions(domain)
         if cached:
@@ -22,35 +18,33 @@ def generate_domain_questions(domain, refresh=False):
 
     print("⚡ Generating new questions from AI...")
 
-    traits = DOMAIN_TRAITS.get(domain)
+    traits = list(DOMAIN_ARCHETYPES.get(domain, {}).keys())
 
     if not traits:
         return []
 
+    # 🔥 NEW: Use AI generator instead of old generate_question
+    generated = generate_questions(domain)
+
     questions = []
 
-    # 🔁 Generate multiple questions per trait
-    for trait in traits:
+    for i, q in enumerate(generated):
+        questions.append({
+            "id": f"{domain}-{i}",
+            "trait": q.get("trait", "general"),
+            "text": q.get("question", "")
+        })
 
-        for i in range(QUESTIONS_PER_TRAIT):
-
-            q = generate_question(domain, trait)
-
-            questions.append({
-                "trait": trait,
-                "question": q
-            })
-
-    # 💾 Save to cache
+    # Store in cache
     store_questions(domain, questions)
 
     return questions
 
 
-# 🧠 EVALUATE ANSWERS
-def evaluate_answers(domain, answers):
 
-    traits = DOMAIN_TRAITS.get(domain)
+def evaluate_answers(domain, answers):
+    print("🚨 FINAL ANSWERS RECEIVED:", answers)
+    traits = DOMAIN_ARCHETYPES.get(domain)
 
     if not traits:
         return {
@@ -59,19 +53,33 @@ def evaluate_answers(domain, answers):
             "feedback": "Invalid domain"
         }
 
+    # 🔥 Normalize domain traits once
+    normalized_traits = [t.lower().replace(" ", "_") for t in traits]
+
     trait_scores = {}
     trait_counts = {}
 
-    # 🔁 Process answers
+    print("📥 RAW ANSWERS:", answers)
+    print("📌 DOMAIN TRAITS:", normalized_traits)
+
     for ans in answers:
+        raw_trait = ans.get("trait", "")
+        raw_answer = ans.get("answer", "")
 
-        trait = ans.get("trait")
-        answer = ans.get("answer")
+        # 🔥 Normalize BOTH
+        trait = raw_trait.lower().replace(" ", "_")
+        formatted_answer = raw_answer.lower().replace(" ", "_")
 
-        if trait not in traits:
+        print("➡️ Processing:", raw_trait, "|", raw_answer, "→", trait, "|", formatted_answer)
+
+        if trait not in normalized_traits:
+            print("⚠️ Skipped trait:", trait)
             continue
 
-        score = normalize(ANSWER_MAP.get(answer, 0))
+        score_raw = ANSWER_MAP.get(formatted_answer, 0)
+        score = normalize(score_raw)
+
+        print("DEBUG SCORE →", formatted_answer, "|", score_raw, "|", score)
 
         if trait not in trait_scores:
             trait_scores[trait] = 0
@@ -80,25 +88,20 @@ def evaluate_answers(domain, answers):
         trait_scores[trait] += score
         trait_counts[trait] += 1
 
-    # 🧮 Average scores per trait
-    for trait in traits:
-
-        if trait in trait_scores:
+    # 🔥 Final averaging
+    for trait in normalized_traits:
+        if trait in trait_scores and trait_counts[trait] > 0:
             trait_scores[trait] = round(
                 trait_scores[trait] / trait_counts[trait], 2
             )
         else:
             trait_scores[trait] = 0
 
-    # 📊 Debug logs
     print("📊 Trait Scores:", trait_scores)
 
-    # 🎯 Calculate fit score
     fit_score = calculate_fit_score(domain, trait_scores)
-
     print("🎯 Fit Score:", fit_score)
 
-    # 🤖 Generate AI feedback
     try:
         feedback = generate_feedback(domain, trait_scores, fit_score)
     except Exception as e:
