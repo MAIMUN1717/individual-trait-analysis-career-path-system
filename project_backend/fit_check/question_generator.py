@@ -99,7 +99,7 @@ def generate_questions(domain, user_answers=None):
     difficulty = get_difficulty(user_answers or {})
 
     # ✅ GET TRAITS FROM DOMAIN_ARCHETYPES
-    traits = list(DOMAIN_ARCHETYPES.get(domain, {}).keys())
+    traits = DOMAIN_ARCHETYPES.get(domain, {}).get("traits", [])
 
     prompt = f"""
 Generate 20 NEW psychometric questions for the domain: {domain}
@@ -134,6 +134,7 @@ Return ONLY JSON:
 
     try:
         new_questions = json.loads(ai_response)
+
     except:
         new_questions = []
 
@@ -152,3 +153,4 @@ Return ONLY JSON:
         return existing_questions[:20]
 
     return balanced_questions[:20]
+

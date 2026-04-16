@@ -18,7 +18,7 @@ def generate_domain_questions(domain, refresh=False):
 
     print("⚡ Generating new questions from AI...")
 
-    traits = list(DOMAIN_ARCHETYPES.get(domain, {}).keys())
+    traits = DOMAIN_ARCHETYPES.get(domain, {}).get("traits", [])
 
     if not traits:
         return []
@@ -44,7 +44,7 @@ def generate_domain_questions(domain, refresh=False):
 
 def evaluate_answers(domain, answers):
     print("🚨 FINAL ANSWERS RECEIVED:", answers)
-    traits = DOMAIN_ARCHETYPES.get(domain)
+    traits = DOMAIN_ARCHETYPES.get(domain, {}).get("traits", [])
 
     if not traits:
         return {

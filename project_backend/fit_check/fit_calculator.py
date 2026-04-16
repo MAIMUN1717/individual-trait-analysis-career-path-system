@@ -3,7 +3,7 @@ from .domain_models import DOMAIN_ARCHETYPES
 
 def calculate_fit_score(domain, trait_scores):
 
-    weights = DOMAIN_ARCHETYPES.get(domain)
+    weights = DOMAIN_ARCHETYPES.get(domain, {}).get("traits", {})
 
     if not weights:
         return 0
@@ -11,6 +11,7 @@ def calculate_fit_score(domain, trait_scores):
     score = 0
 
     for trait, weight in weights.items():
-        score += trait_scores.get(trait, 0) * weight
+        normalized_trait = trait.lower().replace(" ", "_")
+        score += float(trait_scores.get(normalized_trait, 0)) * float(weight)
 
     return round(score, 2)

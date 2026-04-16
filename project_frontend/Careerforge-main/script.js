@@ -72,9 +72,9 @@ function updatePageIndicator(screenId) {
     "submit-screen": "Dashboard / Assessment / Submit",
     "loading-screen": "Processing",
     "results-screen": "Dashboard / Assessment / Results",
-    "fitcheck-domain-screen": "Dashboard / FitCheck",
-    "fitcheck-chat-screen": "Dashboard / FitCheck / Questions",
-    "fitcheck-result-screen": "Dashboard / FitCheck / Result",
+    "fitcheck-domain-screen": "Dashboard / Fit Check",
+    "fitcheck-chat-screen": "Dashboard / Fit Check / Questions",
+    "fitcheck-result-screen": "Dashboard / Fit Check / Result",
     "explore-screen": "Dashboard / Explore Domains"
   };
 
@@ -720,7 +720,7 @@ function renderFitcheckDomainList() {
     div.innerHTML = `
       <h3>${escapeHTML(domain)}</h3>
       <p>Start a focused psychometric fit check for this domain.</p>
-      <button>Start FitCheck</button>
+      <button>Start Fit Check</button>
     `;
 
     div.querySelector("button").addEventListener("click", async () => {
@@ -733,7 +733,7 @@ function renderFitcheckDomainList() {
         selectedFitcheckOption = null;
 
         if (!fitcheckQuestions.length) {
-          showToast("No FitCheck questions available for this domain.", "warning", "FitCheck");
+          showToast("No Fit Check questions available for this domain.", "warning", "FitCheck");
           return;
         }
 
@@ -757,7 +757,7 @@ function renderFitcheckQuestion() {
     ? (answeredCount / fitcheckQuestions.length) * 100
     : 0;
 
-  setText("fitcheck-domain-heading", `FitCheck Domain: ${selectedFitcheckDomain?.name || ""}`);
+  setText("fitcheck-domain-heading", `Fit Check Domain: ${selectedFitcheckDomain?.name || ""}`);
 
   document.getElementById("fitcheck-progress-fill").style.width = `${progressPercent}%`;
   setText(
@@ -828,7 +828,7 @@ function renderFitcheckQuestion() {
 
 function goToNextFitcheckQuestion() {
   if (selectedFitcheckOption === null) {
-    showToast("Please select an option before continuing.", "warning", "FitCheck");
+    showToast("Please select an option before continuing.", "warning", "Fit Check");
     return;
   }
 
@@ -857,10 +857,10 @@ async function submitFitcheckFlow(fitcheckAnswers) {
     renderFitcheckResult(data);
     selectedFitcheckOption = null;
     showScreen("fitcheck-result-screen");
-    showToast("FitCheck result generated successfully.", "success", "FitCheck");
+    showToast("Fit Check result generated successfully.", "success", "FitCheck");
   } catch (err) {
     console.error(err);
-    showToast(err.message || "Unable to generate FitCheck result.", "error", "FitCheck");
+    showToast(err.message || "Unable to generate Fit Check result.", "error", "FitCheck");
     showScreen("welcome-screen");
   } finally {
     setButtonLoading(fitcheckNextBtn, false);
@@ -868,7 +868,7 @@ async function submitFitcheckFlow(fitcheckAnswers) {
 }
 
 function renderFitcheckResult(data) {
-  setText("fitcheck-domain-title", `Domain: ${selectedFitcheckDomain.name}`);
+  setText("fit check-domain-title", `Domain: ${selectedFitcheckDomain.name}`);
 
   const fitPercent = Number(data.fit_score) * 100;
   setText("fit-score-value", `${fitPercent.toFixed(1)}%`);
@@ -1362,7 +1362,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderFitcheckDomainList();
       showScreen("fitcheck-domain-screen");
     } catch (err) {
-      showToast(err.message || "Unable to load FitCheck domains.", "error", "FitCheck");
+      showToast(err.message || "Unable to load Fit Check domains.", "error", "FitCheck");
     }
   });
 
